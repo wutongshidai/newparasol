@@ -5,9 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @BootStrap
-public class PaymentApplication {
+public class NewparasolApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PaymentApplication.class, args);
+		SpringApplication.run(NewparasolApplication.class, args);
 	}
 }

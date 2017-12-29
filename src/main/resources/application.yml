@@ -4,13 +4,13 @@ server:
 
 spring:
   application:
-    name: wutong-payment
+    name: wutong-newparasol
   dubbo:
     scan: com.wutong
     registry:
       address: zookeeper://192.168.3.189:2182
     application:
-      name: wutong-payment
+      name: wutong-newparasol
     module:
       default: false
   session:
