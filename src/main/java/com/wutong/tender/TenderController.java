@@ -138,6 +138,14 @@ public class TenderController {
 		 return tenders;
 	 }*/
 	   
+	 /**
+	  * 投标信息列表
+	  * @param classification 分类
+	  * @param userId  用户Id
+	  * @param count   每页条数
+	  * @param page    页码
+	  * @return
+	  */
 	 @RequestMapping("/selectListTender")
 	 public ResponseResult selectListTender(String classification , String userId , String count , String page){
 		 ResponseResult<Object> result = new ResponseResult<>();

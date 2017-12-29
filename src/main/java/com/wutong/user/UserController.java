@@ -3,6 +3,8 @@ package com.wutong.user;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.parasol.core.service.UserService;
 import com.parasol.core.user.User;
+import com.wutong.framework.core.web.common.http.ResponseResult;
 
 @RestController
 @RequestMapping("/user")
@@ -21,8 +24,6 @@ public class UserController {
 	
 	@Reference 
 	private UserService userService;
-	
-	static String flag = "0";
 	
 	/**
 	 * 注册
@@ -32,6 +33,7 @@ public class UserController {
 	 */
 	@RequestMapping("/register")
 	public String register(String userName , String password){
+		String flag = "0";
 		User user = new User();
 		Date date = new Date();
 		user.setUserName(userName);
@@ -51,6 +53,7 @@ public class UserController {
 	 */
 	@RequestMapping("/repeatName")
 	public String repeatName(String userName){
+		String flag = "0";
 		User user = userService.selectUserByUsername(userName);
 		if(null == user){
 			flag = "1";
@@ -65,17 +68,24 @@ public class UserController {
 	 * @return 0用户不存在,1成功,2密码错误
 	 */
 	@RequestMapping("/login")
-	public String login(String userName , String password ,HttpServletRequest request){
+	public ResponseResult login(String userName , String password ,HttpServletRequest request){
+		String flag = "0";
+		ResponseResult<Object> result = new ResponseResult<>();
+		Map map = new HashMap();
 		User user = userService.selectUser(userName);
 		if(null != user){
 			if(user.getPassword().equals(encodePassword(password))){
 				request.getSession().setAttribute("user", user);
-				flag = "1" ;
+				map.put("user",user);
+				map.put("flag", 1);
 			}else{
-				flag = "2" ;
+				map.put("flag", 2);
 			}
+		}else{
+			map.put("flag", 0);
 		}
-		return flag;
+		result.addData(map);
+		return result;
 	} 
 	
 	/**
