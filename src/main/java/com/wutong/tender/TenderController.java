@@ -1,17 +1,26 @@
 package com.wutong.tender;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.fusesource.hawtbuf.ByteArrayInputStream;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,11 +28,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.parasol.common.load.Files_Utils_DG;
+import com.parasol.common.load.fileUpload;
+import com.parasol.common.oss.OSSObjectUtils;
+import com.parasol.common.utils.PropertiesUtils;
+import com.parasol.common.utils.encoder.BASE64Decoder;
 import com.parasol.core.myclass.TenderName;
 import com.parasol.core.service.TenderService;
+import com.parasol.core.service.UserService;
 import com.parasol.core.tender.Tender;
 import com.parasol.core.user.User;
 import com.wutong.common.OrderUtil;
+import com.wutong.framework.core.web.auth.aop.annotation.AuthLogin;
 import com.wutong.framework.core.web.common.http.ResponseResult;
 
 @RestController
@@ -32,10 +47,10 @@ public class TenderController {
 	
 	private Logger logger = Logger.getLogger(this.getClass());
 	
-	static String flag = "0";
-	
 	@Reference
 	private TenderService tenderService;
+	@Reference
+	private UserService userService;
 	
 	/**
 	 * 发布招标信息
@@ -44,36 +59,54 @@ public class TenderController {
 	 * @return 0添加失败，1添加成功
 	 */
 	@RequestMapping("/tenderNeed")
-//  @AuthLogin
-	public String tenderNeed(HttpServletRequest request , @RequestParam("file_upload") MultipartFile[] multipartFile){
+	@AuthLogin
+	public String tenderNeed(HttpServletRequest request){
+		String flag = "0";
 		Tender tender = new Tender();
+		//  HttpServletRequest request , @RequestParam("file_upload") MultipartFile[] multipartFile   @ModelAttribute("form") Tender tender1 ,
 		try {
-			User user = (User) request.getSession().getAttribute("user");
+			User user = (User) request.getSession().getAttribute("user"); 
+//			System.out.println(tender1);
+//			User user = userService.selectByPrimaryKey(1);
 			logger.info("用户信息......：" + user);
+			
+		    Map<String, String[]> map = request.getParameterMap();
+		    String[] str = map.get("endDate1");
+			  StringBuffer sb = new StringBuffer();
+			   for(int i = 0; i < str.length; i++){
+			     sb. append(str[i]);
+			     }
+			String s = sb.toString();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			System.out.println(sdf.parse(s)+"shijian");	
+			
 			BeanUtils.populate(tender, request.getParameterMap());
+			tender.setEndDate(sdf.parse(s));
+			String split = tender.getBidFile().split(",")[1];
+			
+			String path = "/filesOut/Upload/" + getDataPath() + "/" +tender.getTenderFile() ;
+			fileUpload.saveImg(split, PropertiesUtils.getStringValue("tender_file__url") + path);
+			
+/*	   		InputStream inputStream = new ByteArrayInputStream(bs);
+	   		System.out.println(inputStream.toString().length()+"aaa00000000000000000000000000000000000000000000000");
+	   		OSSObjectUtils.uploadFile("wut1/aaaaaa", inputStream);*/
+			tender.setTenderFile(path);
+			tender.setBidFile("1");
 			logger.info("投标信息......：" + tender);
-			tender.setProjectName(urlDecode(tender.getProjectName()));
 			Date date = new Date();
 			tender.setStartTime(date);
 			tender.setUserid(user.getId());			
-			 if (multipartFile != null && multipartFile.length > 0) {
-				  tender.setTenderFile(Files_Utils_DG.FilesUpload_transferTo_spring(request, multipartFile[0], "/filesOut/Upload"));
-			 }
 			tender.setProjectType(OrderUtil.getBidOrderId(user.getId(), tender.getId()));
-			int i = tenderService.insert(tender);
-			if(i == 1){
+			int i = tenderService.insert(tender);;
+			if(i != 0){
 				logger.info("招标信息发布成功！");
-				flag = "1";
+				flag = String.valueOf(i);
 			}else{
 				logger.info("信息发布失败！");
 			}
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		return flag ; 
 	}
 	
@@ -83,11 +116,13 @@ public class TenderController {
 	 * @return
 	 */
 	@RequestMapping(value="/selectByPrimaryName")
-	public ResponseResult selectByPrimaryName(String projectName){
-		String name = urlDecode(projectName);
+	public ResponseResult selectByPrimaryName(String tenderId){
+		System.out.println(tenderId);
+//		String name = urlDecode(projectName);
 		Map<Object,Object> map = new HashMap<>();
 		ResponseResult result = new ResponseResult();
-		Tender tender = tenderService.selectByPrimaryName(name);
+		Tender tender = tenderService.selectByPrimaryKey(Integer.parseInt(tenderId));
+//		Tender tender = tenderService.selectByPrimaryName(name);
 		if(null != tender){
 			String substring = tender.getTenderFile().substring(tender.getTenderFile().lastIndexOf("/")+1);
 			map.put("tender", tender);
@@ -99,29 +134,6 @@ public class TenderController {
 		}
 		return result;
 	}
-	
-	/**
-	 * 删除发标信息
-	 * @param projectName
-	 * @return 0删除失败 ,1删除成功,2无删除权限
-	 */
-	 @RequestMapping("/deleteByneed")
-//   @AuthLogin
-	 public String deleteByneed(HttpServletRequest request , String projectName){
-		 User user = (User) request.getSession().getAttribute("user");
-		 Tender tender = tenderService.selectByPrimaryName(urlDecode(projectName));
-		 if(tender.getUserid() == user.getId()){
-			 Boolean booleans = tenderService.deleteByPrinaryName(urlDecode(projectName));
-			 if(booleans == true){
-				 flag = "1";
-				 logger.info("标信息删除成功！");
-			 }
-		 }else{
-			 flag = "2";
-			 logger.info("无删除权限！");
-		 }
-		 return flag;
-	 }
 	  
 /*	 @RequestMapping("/selectTenderName")
 	 public List<TenderName> selectTenderName(){
@@ -164,6 +176,10 @@ public class TenderController {
 		}
 		return encode;
 	}
+	
+    public static String getDataPath() {
+        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    }
 }
 
 

@@ -69,6 +69,8 @@ public class UserController {
 	 */
 	@RequestMapping("/login")
 	public ResponseResult login(String userName , String password ,HttpServletRequest request){
+		System.out.println(userName+"aaaaaaaaaaaa");
+		System.out.println(password+"aaaaaaaaaaaa");
 		String flag = "0";
 		ResponseResult<Object> result = new ResponseResult<>();
 		Map map = new HashMap();
