@@ -3,6 +3,7 @@ package com.wutong.user;
 import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,6 +70,36 @@ public class UserManageController {
 		 Map<?, ?> map = tenderService.selectListTender(classification , user.getId().toString() , count , page); 	
 		 result.addData(map);
 		 return result ;
+	 }
+	 
+	 /**
+	  * 修改我的发布日期
+	  * @param id
+	  * @param endTime
+	  * @return
+	  */
+	 @RequestMapping("/updateEndtime")
+//	 @AuthLogin
+	 public String updateEndtime(String id,String endTime){
+		 String flag = "";
+		 Tender key = tenderService.selectByPrimaryKey(Integer.parseInt(id));
+		try {
+				Date c = new Date();//变更时日期
+				Date b = key.getEndDate();//截止日期
+				if(c.before(b) || c.equals(b)){
+					 Integer integer = tenderService.updateEndtime(id, endTime);
+					 if(integer == 1){
+						 flag = "修改成功！";
+					 }else{
+						 flag = "修改失败！";
+					 }
+				}else{
+					flag = "不可更改！";
+				} 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		 return flag ;
 	 }
 	
 	/**

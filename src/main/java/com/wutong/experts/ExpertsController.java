@@ -5,6 +5,7 @@ import com.parasol.common.load.fileUpload;
 import com.parasol.common.oss.OSSObjectUtils;
 import com.parasol.common.utils.PropertiesUtils;
 import com.parasol.common.utils.encoder.BASE64Decoder;
+import com.parasol.core.experts.Expertindex;
 import com.parasol.core.experts.Experts;
 import com.parasol.core.experts.ExpertsA;
 import com.parasol.core.experts.ExpertsB;
@@ -119,6 +120,20 @@ public class ExpertsController {
 		 return re;
 	 }
     
+	 /**
+	  * 首页专家展示
+	  * @return
+	  * @throws Exception
+	  */
+	 @RequestMapping(value="/expertsFour")
+		public ResponseResult expertsFour() throws Exception{
+		 ResponseResult re = new ResponseResult();
+		List<Expertindex> expertindexs = expertsService.selectExpertindex();
+		re.addData(expertindexs);
+		logger.info("首页专家："+ expertindexs);
+		return re;
+	 }
+	 
     public static String getUUIDName() {
         return UUID.randomUUID().toString();
     }

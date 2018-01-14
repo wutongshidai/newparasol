@@ -166,6 +166,23 @@ public class TenderController {
 		 return result ;
 	 }
 	 
+	 
+	 /**
+	  * 投标信息列表
+	  * @param classification 分类
+	  * @param userId  用户Id
+	  * @param count   每页条数
+	  * @param page    页码
+	  * @return
+	  */
+	 @RequestMapping("/selectListTenderin")
+	 public ResponseResult selectListTender(String count , String page){
+		 ResponseResult<Object> result = new ResponseResult<>();
+		 Map<?, ?> map = tenderService.selectListTender1(count , page); 	
+		 result.addData(map);
+		 return result ;
+	 }
+	 
 	public String urlDecode(String encode) {
 		try {
 			String decode = URLDecoder.decode(encode,"UTF-8");
