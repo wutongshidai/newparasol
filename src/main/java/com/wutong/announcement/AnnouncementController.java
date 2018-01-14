@@ -1,5 +1,6 @@
 package com.wutong.announcement;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,9 +33,17 @@ public class AnnouncementController {
 		pageSize = (pageSize == null || pageSize == 0? DEFAULT_PAGE_SIZE : pageSize);
 		pageNo = (pageNo == null || pageNo == 0 ? 1 : pageNo);
 		status = (status == null ? -1 : status);
-		PageInfo<Announcement> announcements = announcementService.list(columnId, status, pageNo, pageSize);
+		PageInfo<Announcement> announcements = announcementService.list(columnId, status, -1, pageNo, pageSize);
 		ResponseResult<PageInfo<Announcement>> pageInfo = new ResponseResult<>();
 		pageInfo.addData(announcements);
 		return pageInfo;
+	}
+	
+	@GetMapping("/findone")
+	public ResponseResult<Announcement> findone(Integer announcementId) {
+		Announcement announcement = announcementService.findById(announcementId);
+		ResponseResult<Announcement> result = new ResponseResult<>();
+		result.addData(announcement);
+		return result;
 	}
 }
