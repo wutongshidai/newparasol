@@ -3,6 +3,7 @@ package com.wutong.user;
 import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,7 +56,6 @@ public class UserManageController {
 	 /**
 	  * 我的发布
 	  * @param classification 分类
-	  * @param userId  用户Id
 	  * @param count   每页条数
 	  * @param page    页码
 	  * @return
@@ -70,18 +70,49 @@ public class UserManageController {
 		 result.addData(map);
 		 return result ;
 	 }
+	 
+	 /**
+	  * 修改我的发布日期
+	  * @param id
+	  * @param endTime
+	  * @return
+	  */
+	 @RequestMapping("/updateEndtime")
+//	 @AuthLogin
+	 public String updateEndtime(String id,String endTime){
+		 String flag = "";
+		 Tender key = tenderService.selectByPrimaryKey(Integer.parseInt(id));
+		try {
+				Date c = new Date();//变更时日期
+				Date b = key.getEndDate();//截止日期
+				if(c.before(b) || c.equals(b)){
+					 Integer integer = tenderService.updateEndtime(id, endTime);
+					 if(integer == 1){
+						 flag = "修改成功！";
+					 }else{
+						 flag = "修改失败！";
+					 }
+				}else{
+					flag = "不可更改！";
+				} 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		 return flag ;
+	 }
 	
 	/**
 	 * 删除发标信息
-	 * @param projectName
+	 * @param
 	 * @return 0删除失败 ,1删除成功,2无删除权限
 	 */
 	 @RequestMapping("/deleteByneed")
 	 @AuthLogin
-	 public String deleteByneed(HttpServletRequest request , String tenderId){
+	 public ResponseResult deleteByneed(HttpServletRequest request , String tenderId){
+	 	ResponseResult responseResult = new ResponseResult();
 		 String flag = "0";
-//		 User user = (User) request.getSession().getAttribute("user");
-		 User user = userService.selectByPrimaryKey(1);
+		 User user = (User) request.getSession().getAttribute("user");
+//		 User user = userService.selectByPrimaryKey(1);
 		 Tender tender = tenderService.selectByPrimaryKey(Integer.parseInt(tenderId));
 //		 Tender tender = tenderService.selectByPrimaryName(urlDecode(projectName));
 		 if(tender.getUserid() == user.getId()){
@@ -89,17 +120,21 @@ public class UserManageController {
 			 if(booleans == true){
 				 flag = "1";
 				 logger.info("标信息删除成功！");
+				 System.out.println("删除成功");
 			 }
 		 }else{
 			 flag = "2";
 			 logger.info("无删除权限！");
+			 System.out.println("删除失败");
 		 }
-		 return flag;
+		 responseResult.addData(flag);
+		 return responseResult;
+
 	 }
 	 
 	/**
 	 * 我的投标查询(带条数)
-	 * @param com_userId
+	 * @param
 	 * @return
 	 */
     @RequestMapping(value = "/getMyBid")
@@ -171,7 +206,7 @@ public class UserManageController {
 	
 	/**
 	 * 修改用户信息
-	 * @param companyName
+	 * @param
 	 * @param request
 	 * @return
 	 */

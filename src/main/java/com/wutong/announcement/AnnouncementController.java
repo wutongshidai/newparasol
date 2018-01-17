@@ -39,9 +39,10 @@ public class AnnouncementController {
 		return pageInfo;
 	}
 	
-	@GetMapping("/findone")
+	@RequestMapping("/findone")
 	public ResponseResult<Announcement> findone(Integer announcementId) {
 		Announcement announcement = announcementService.findById(announcementId);
+		System.out.println(announcement);
 		ResponseResult<Announcement> result = new ResponseResult<>();
 		result.addData(announcement);
 		return result;
