@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.codec.binary.Base64;
@@ -88,7 +89,7 @@ public class TenderController {
 			String path =  getDataPath() + "/" +tender.getTenderFile() ;
 //			fileUpload.saveImg(split, "/opt/filesOut/Upload/" + path);
 			byte[] buffer = split.getBytes();
-			FileOutputStream out = new FileOutputStream("/opt/filesOut/Upload/" +tender.getTenderFile());
+			FileOutputStream out = new FileOutputStream("/opt/filesOut/Upload/"+path);
 			out.write(buffer);
 			out.close();
 /*	   		InputStream inputStream = new ByteArrayInputStream(bs);
@@ -196,6 +197,11 @@ public class TenderController {
 		}
 		return encode;
 	}
+	
+    @RequestMapping(value = "/fileDownload_servlet")
+    public void fileDownload_servlet(HttpServletRequest request, HttpServletResponse response , String filePath) {
+  	  Files_Utils_DG.FilesDownload_stream(request , response , filePath);
+      }
 	
     public static String getDataPath() {
         return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
