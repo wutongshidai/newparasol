@@ -55,12 +55,13 @@ public class TenderController {
 	/**
 	 * 发布招标信息
 	 * @param request
-	 * @param multipartFile
+	 * @param
 	 * @return 0添加失败，1添加成功
 	 */
 	@RequestMapping("/tenderNeed")
 	@AuthLogin
-	public String tenderNeed(HttpServletRequest request){
+	public ResponseResult tenderNeed(HttpServletRequest request){
+		ResponseResult responseResult =new ResponseResult();
 		String flag = "0";
 		Tender tender = new Tender();
 		//  HttpServletRequest request , @RequestParam("file_upload") MultipartFile[] multipartFile   @ModelAttribute("form") Tender tender1 ,
@@ -84,9 +85,12 @@ public class TenderController {
 			tender.setEndDate(sdf.parse(s));
 			String split = tender.getBidFile().split(",")[1];
 			
-			String path = "/filesOut/Upload/" + getDataPath() + "/" +tender.getTenderFile() ;
-			fileUpload.saveImg(split, PropertiesUtils.getStringValue("tender_file__url") + path);
-			
+			String path =  getDataPath() + "/" +tender.getTenderFile() ;
+//			fileUpload.saveImg(split, "/opt/filesOut/Upload/" + path);
+			byte[] buffer = split.getBytes();
+			FileOutputStream out = new FileOutputStream("/opt/filesOut/Upload/" +tender.getTenderFile());
+			out.write(buffer);
+			out.close();
 /*	   		InputStream inputStream = new ByteArrayInputStream(bs);
 	   		System.out.println(inputStream.toString().length()+"aaa00000000000000000000000000000000000000000000000");
 	   		OSSObjectUtils.uploadFile("wut1/aaaaaa", inputStream);*/
@@ -97,7 +101,7 @@ public class TenderController {
 			tender.setStartTime(date);
 			tender.setUserid(user.getId());			
 			tender.setProjectType(OrderUtil.getBidOrderId(user.getId(), tender.getId()));
-			int i = tenderService.insert(tender);;
+			int i = tenderService.insert(tender);
 			if(i != 0){
 				logger.info("招标信息发布成功！");
 				flag = String.valueOf(i);
@@ -106,13 +110,14 @@ public class TenderController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
-		return flag ; 
+		}
+		responseResult.addData(flag);
+		return responseResult ;
 	}
 	
 	/**
 	 * 显示投标信息详情
-	 * @param projectName
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(value="/selectByPrimaryName")
@@ -169,8 +174,6 @@ public class TenderController {
 	 
 	 /**
 	  * 投标信息列表
-	  * @param classification 分类
-	  * @param userId  用户Id
 	  * @param count   每页条数
 	  * @param page    页码
 	  * @return

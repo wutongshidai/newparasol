@@ -56,7 +56,6 @@ public class UserManageController {
 	 /**
 	  * 我的发布
 	  * @param classification 分类
-	  * @param userId  用户Id
 	  * @param count   每页条数
 	  * @param page    页码
 	  * @return
@@ -104,15 +103,16 @@ public class UserManageController {
 	
 	/**
 	 * 删除发标信息
-	 * @param projectName
+	 * @param
 	 * @return 0删除失败 ,1删除成功,2无删除权限
 	 */
 	 @RequestMapping("/deleteByneed")
 	 @AuthLogin
-	 public String deleteByneed(HttpServletRequest request , String tenderId){
+	 public ResponseResult deleteByneed(HttpServletRequest request , String tenderId){
+	 	ResponseResult responseResult = new ResponseResult();
 		 String flag = "0";
-//		 User user = (User) request.getSession().getAttribute("user");
-		 User user = userService.selectByPrimaryKey(1);
+		 User user = (User) request.getSession().getAttribute("user");
+//		 User user = userService.selectByPrimaryKey(1);
 		 Tender tender = tenderService.selectByPrimaryKey(Integer.parseInt(tenderId));
 //		 Tender tender = tenderService.selectByPrimaryName(urlDecode(projectName));
 		 if(tender.getUserid() == user.getId()){
@@ -120,17 +120,21 @@ public class UserManageController {
 			 if(booleans == true){
 				 flag = "1";
 				 logger.info("标信息删除成功！");
+				 System.out.println("删除成功");
 			 }
 		 }else{
 			 flag = "2";
 			 logger.info("无删除权限！");
+			 System.out.println("删除失败");
 		 }
-		 return flag;
+		 responseResult.addData(flag);
+		 return responseResult;
+
 	 }
 	 
 	/**
 	 * 我的投标查询(带条数)
-	 * @param com_userId
+	 * @param
 	 * @return
 	 */
     @RequestMapping(value = "/getMyBid")
@@ -202,7 +206,7 @@ public class UserManageController {
 	
 	/**
 	 * 修改用户信息
-	 * @param companyName
+	 * @param
 	 * @param request
 	 * @return
 	 */
