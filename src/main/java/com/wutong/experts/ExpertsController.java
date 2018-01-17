@@ -64,7 +64,7 @@ public class ExpertsController {
             if (null != experts.getPhoto() && "" != experts.getPhoto()) {
                 String a = "/imgl/" + getUUIDName() + ".png";
 //                "/usr/local/tomcat/webapps/parasol-controller-0.0.1-SNAPSHOT/imgl/" + getUUIDName() + ".png"
-                fileUpload.saveImg(experts.getPhoto(), PropertiesUtils.getStringValue("tender_file__url") + a);
+                fileUpload.saveImg(experts.getPhoto(), "/usr/local/tomcat/webapps/parasol-controller-0.0.1-SNAPSHOT" + a);
                 experts.setPhoto(".." + a);
             }
          Integer in = expertsService.saveExperts(experts);
