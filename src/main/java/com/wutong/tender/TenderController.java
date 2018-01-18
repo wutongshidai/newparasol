@@ -1,5 +1,6 @@
 package com.wutong.tender;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -18,8 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.fusesource.hawtbuf.ByteArrayInputStream;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +42,7 @@ import com.parasol.core.service.UserService;
 import com.parasol.core.tender.Tender;
 import com.parasol.core.user.User;
 import com.wutong.common.OrderUtil;
+import com.wutong.config.AppProperties;
 import com.wutong.framework.core.web.auth.aop.annotation.AuthLogin;
 import com.wutong.framework.core.web.common.http.ResponseResult;
 
@@ -48,10 +52,14 @@ public class TenderController {
 	
 	private Logger logger = Logger.getLogger(this.getClass());
 	
+	@Autowired
+	private AppProperties appProperties;
+	
 	@Reference
 	private TenderService tenderService;
 	@Reference
 	private UserService userService;
+	
 	
 	/**
 	 * 发布招标信息
@@ -67,7 +75,8 @@ public class TenderController {
 		Tender tender = new Tender();
 		//  HttpServletRequest request , @RequestParam("file_upload") MultipartFile[] multipartFile   @ModelAttribute("form") Tender tender1 ,
 		try {
-			User user = (User) request.getSession().getAttribute("user"); 
+			User user = (User) request.getSession().getAttribute("user");
+//			User user = null;
 //			System.out.println(tender1);
 //			User user = userService.selectByPrimaryKey(1);
 			logger.info("用户信息......：" + user);
@@ -78,18 +87,23 @@ public class TenderController {
 			   for(int i = 0; i < str.length; i++){
 			     sb. append(str[i]);
 			     }
+			   System.out.println("获取日期.................." + sb);
 			String s = sb.toString();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 			System.out.println(sdf.parse(s)+"shijian");	
 			
 			BeanUtils.populate(tender, request.getParameterMap());
 			tender.setEndDate(sdf.parse(s));
 			String split = tender.getBidFile().split(",")[1];
 			
-			String path =  getDataPath() + "/" +tender.getTenderFile() ;
+			File filePath = new File(appProperties.getUploadPath() + getDataPath());
+			if (!filePath.exists()) {
+				filePath.mkdir();
+			}
+			String path =  filePath + File.separator +tender.getTenderFile() ;
 //			fileUpload.saveImg(split, "/opt/filesOut/Upload/" + path);
 			byte[] buffer = split.getBytes();
-			FileOutputStream out = new FileOutputStream("/opt/filesOut/Upload/"+path);
+			FileOutputStream out = new FileOutputStream(path);
 			out.write(buffer);
 			out.close();
 /*	   		InputStream inputStream = new ByteArrayInputStream(bs);
@@ -110,7 +124,7 @@ public class TenderController {
 				logger.info("信息发布失败！");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 		responseResult.addData(flag);
 		return responseResult ;
@@ -204,7 +218,7 @@ public class TenderController {
       }
 	
     public static String getDataPath() {
-        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        return new SimpleDateFormat("yyyyMMdd").format(new Date());
     }
 }
 
