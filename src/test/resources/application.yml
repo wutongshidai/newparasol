@@ -1,9 +1,9 @@
 server:
   port: 9095
-  context-path: /awm
-  
+  context-path: /api
+
 wutong: 
-  uploadPath: D://
+  uploadPath: /opt/fileOut/Upload
 
 spring:
   application:
@@ -11,7 +11,7 @@ spring:
   dubbo:
     scan: com.wutong
     registry:
-      address: zookeeper://127.0.0.1:2181
+      address: zookeeper://192.168.3.189:2182
     application:
       name: wutong-newparasol
     module:
