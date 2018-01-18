@@ -118,7 +118,7 @@
                             <classpathPrefix>lib/</classpathPrefix>  
                             <mainClass>com.wutong.NewparasolApplication</mainClass>  
                         </manifest>  
-                    </archive>  
+                    </archive>
                 </configuration>  
             </plugin>
             <plugin>
@@ -146,7 +146,7 @@
                                 <copy todir="build" file="start.bat"/>
                                 <copy todir="build" file="start.sh"/>
                                 <copy todir="build/classes"
-                                      file="${project.basedir}/src/main/resources/application.yml"/>
+                                      file="${project.basedir}/src/test/resources/application.yml"/>
                             </tasks>
                         </configuration>
                         <goals>
