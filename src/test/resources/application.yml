@@ -1,6 +1,6 @@
 server:
   port: 9095
-  context-path: /api
+  context-path: /awm
 
 wutong: 
   uploadPath: /opt/fileOut/Upload
