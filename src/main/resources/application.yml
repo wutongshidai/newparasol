@@ -1,9 +1,6 @@
 server:
   port: 9095
-  context-path: /awm
-
-wutong: 
-  uploadPath: /opt/fileOut/Upload
+  context-path: /api
 
 spring:
   application:
@@ -31,14 +28,14 @@ spring:
       enabled: true
       force: true
     multipart: # 文件上传限制
-      max-file-size: 100KB
-      max-request-size: 1MB
+      max-file-size: 10MB
+      max-request-size: 15MB
   devtools:
     restart:
       enabled: false
 
-logging:
-  level:
+#logging:
+ # level:
  #   root: off
   
   
