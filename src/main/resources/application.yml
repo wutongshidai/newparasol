@@ -1,0 +1,46 @@
+server:
+  port: 9095
+  context-path: /awm
+
+wutong: 
+  uploadPath: /opt/fileOut/Upload
+
+spring:
+  application:
+    name: wutong-newparasol
+  dubbo:
+    scan: com.wutong
+    registry:
+      address: zookeeper://192.168.3.189:2182
+    application:
+      name: wutong-newparasol
+    module:
+      default: false
+  session:
+    store-type: redis
+  redis:
+    host: 192.168.3.189
+    port: 6379
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+  http: # 开启encodingFilter，设置字符集
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    multipart: # 文件上传限制
+      max-file-size: 100KB
+      max-request-size: 1MB
+  devtools:
+    restart:
+      enabled: false
+
+logging:
+  level:
+ #   root: off
+  
+  
+
+

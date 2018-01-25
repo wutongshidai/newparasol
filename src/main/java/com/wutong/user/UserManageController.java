@@ -116,11 +116,18 @@ public class UserManageController {
 		 Tender tender = tenderService.selectByPrimaryKey(Integer.parseInt(tenderId));
 //		 Tender tender = tenderService.selectByPrimaryName(urlDecode(projectName));
 		 if(tender.getUserid() == user.getId()){
-			 Boolean booleans = tenderService.deleteByPrinaryId(Integer.parseInt(tenderId));
-			 if(booleans == true){
-				 flag = "1";
-				 logger.info("标信息删除成功！");
-				 System.out.println("删除成功");
+			 List<Bid_order> bid_orders = bidService.selectOrderByTid(tender.getId());
+			 if (bid_orders != null ){
+				 flag = "3";
+				 logger.info("已经有投标禁止删除！");
+				 System.out.println("已经有投标禁止删除！");
+			 } else {
+				 Boolean booleans = tenderService.deleteByPrinaryId(Integer.parseInt(tenderId));
+				 if (booleans == true) {
+					 flag = "1";
+					 logger.info("标信息删除成功！");
+					 System.out.println("删除成功");
+				 }
 			 }
 		 }else{
 			 flag = "2";
