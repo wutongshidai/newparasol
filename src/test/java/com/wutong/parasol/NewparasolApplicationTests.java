@@ -1,4 +1,4 @@
-package com.wutong.payment;
+package com.wutong.parasol;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PaymentApplicationTests {
+public class NewparasolApplicationTests {
 
 	@Test
 	public void contextLoads() {
