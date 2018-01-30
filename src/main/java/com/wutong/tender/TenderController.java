@@ -95,17 +95,17 @@ public class TenderController {
 			BeanUtils.populate(tender, request.getParameterMap());
 			tender.setEndDate(sdf.parse(s));
 			String split = tender.getBidFile().split(",")[1];
-			
+			System.out.println(split);
 			File filePath = new File(appProperties.getUploadPath() + getDataPath());
 			if (!filePath.exists()) {
 				filePath.mkdir();
 			}
 			String path =  filePath + File.separator +tender.getTenderFile() ;
-//			fileUpload.saveImg(split, "/opt/filesOut/Upload/" + path);
-			byte[] buffer = split.getBytes();
-			FileOutputStream out = new FileOutputStream(path);
-			out.write(buffer);
-			out.close();
+			fileUpload.saveImg(split, path);
+//			byte[] buffer = split.getBytes();
+//			FileOutputStream out = new FileOutputStream(path);
+//			out.write(buffer);
+//			out.close();
 /*	   		InputStream inputStream = new ByteArrayInputStream(bs);
 	   		System.out.println(inputStream.toString().length()+"aaa00000000000000000000000000000000000000000000000");
 	   		OSSObjectUtils.uploadFile("wut1/aaaaaa", inputStream);*/
