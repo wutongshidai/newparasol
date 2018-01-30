@@ -1,5 +1,8 @@
 package com.wutong.payment;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

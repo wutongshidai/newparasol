@@ -1,6 +1,7 @@
 server:
   port: 9095
   context-path: /awm
+  maxHttpPostSize: 
 
 wutong: 
   uploadPath: D:/
