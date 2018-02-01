@@ -115,9 +115,13 @@ public class UserManageController {
 //		 User user = userService.selectByPrimaryKey(1);
 		 Tender tender = tenderService.selectByPrimaryKey(Integer.parseInt(tenderId));
 //		 Tender tender = tenderService.selectByPrimaryName(urlDecode(projectName));
-		 if(tender.getUserid() == user.getId()){
+         System.out.println(tender.getUserid());
+         System.out.println(tender.getUserid().equals(user.getId()));
+         System.out.println("--------------");
+         System.out.println(user.getId());
+		 if(tender.getUserid().equals(user.getId())){
 			 List<Bid_order> bid_orders = bidService.selectOrderByTid(tender.getId());
-			 if (bid_orders != null ){
+			 if (bid_orders.size() >0){
 				 flag = "3";
 				 logger.info("已经有投标禁止删除！");
 				 System.out.println("已经有投标禁止删除！");
