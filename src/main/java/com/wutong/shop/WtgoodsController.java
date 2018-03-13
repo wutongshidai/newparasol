@@ -1,10 +1,13 @@
 package com.wutong.shop;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.parasol.core.mall.Wt_admin_expend;
 import com.parasol.core.mall.Wt_goods;
 import com.parasol.core.service.WtadminexpendService;
 import com.parasol.core.service.WtgoodsService;
+import net.sf.json.JSONArray;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 
@@ -305,4 +305,20 @@ public class WtgoodsController {
         int i = wtgoodsService.insertSelective(goods);
         return i;
     }
+
+    /**
+     * 编辑商品
+     */
+    @ResponseBody
+    @RequestMapping("/getWtCat")
+    public JSONArray  getWtCat () {
+        List list = wtgoodsService.selectCat();
+        JSONArray jsonArray = JSONArray.fromObject(list);
+        System.out.println(jsonArray);
+        return jsonArray;
+    }
+
+
+
+
 }
