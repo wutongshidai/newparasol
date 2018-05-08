@@ -70,7 +70,20 @@ public class UserManageController {
 		 result.addData(map);
 		 return result ;
 	 }
-	 
+
+	/**
+	 * 修改投标状态
+	 * @param id
+	 * @param status
+	 * @return
+	 */
+	@RequestMapping("/changeTenderStatus")
+	public ResponseResult changeTenderStatus(String id , String status){
+		ResponseResult<Object> result = new ResponseResult<>();
+		Map map = tenderService.changeTenderStatus(id , Integer.parseInt(status));
+		result.addData(map);
+		return result ;
+	}
 	 /**
 	  * 修改我的发布日期
 	  * @param id
@@ -100,7 +113,7 @@ public class UserManageController {
 		}
 		 return flag ;
 	 }
-	
+
 	/**
 	 * 删除发标信息
 	 * @param
