@@ -310,6 +310,11 @@ public class UserManageController {
         for (int i =0; i<list.size(); i++){
             Integer bidInfoid = list.get(i).getBidInfoid();
             Bid_info bid_info =  bidService.selectInfoById(bidInfoid);
+            if (bid_info != null) {
+            	int comUserId = bid_info.getComUserid();
+            	int payCount = bidService.countByUserId(comUserId);
+            	bid_info.setNewMember(payCount == 0);
+            }
             OrderInfo orderInfo = new OrderInfo();
             orderInfo.setBid_info(bid_info);
             orderInfo.setBid_order(list.get(i));
