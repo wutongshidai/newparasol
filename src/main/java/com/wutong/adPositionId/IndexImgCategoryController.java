@@ -49,4 +49,12 @@ public class IndexImgCategoryController {
         result.addData(map);
         return result;
     }
+
+    @RequestMapping(path="/getIdList")
+    public ResponseResult getAdList(Integer adId,Integer gdId,Integer pageNo,Integer pageSize) {
+        ResponseResult result = new ResponseResult();
+        PageInfo<IndexImgCategory> list = indexImgCategoryService.list(adId, gdId, pageNo, pageSize);
+        result.addData(list);
+        return result;
+    }
 }
